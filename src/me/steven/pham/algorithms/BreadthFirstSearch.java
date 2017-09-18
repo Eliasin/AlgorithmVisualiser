@@ -1,73 +1,47 @@
 package me.steven.pham.algorithms;
 
 import com.sun.javafx.geom.Vec2d;
+import me.steven.pham.me.steven.pham.containerDecorators.LinkedListDecorator;
 
-import java.util.LinkedList;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Vector;
-import java.util.function.Function;
+import java.util.*;
 
 public class BreadthFirstSearch {
 
-    private Runnable onStepStart = () -> {};
-    private Runnable onStepEnd = () -> {};
-    private Runnable onAlgorithmEnd = () -> {};
+    private Runnable needVisitingAddRunnable = () -> {};
+    private Runnable visitedAddRunnable = () -> {};
+    private Runnable pathAddRunnable = () -> {};
 
-    private LinkedList<Vec2d> result = null;
+    public Optional<LinkedList<Vec2d>> run(Grid grid, Vec2d start, Vec2d target) {
 
-    private Queue<Vec2d> discovered = new LinkedList<>();
-    private Vector<Vec2d> visited = new Vector<>();
-    private Vec2d current = new Vec2d(0, 0);
-    private Vec2d target = new Vec2d(0, 0);
-    private Grid grid = new Grid();
+        Queue<Vec2d> needVisiting = new LinkedListDecorator<>();
+        LinkedList<Vec2d> visited = new LinkedListDecorator<>();
+        Vec2d current = new Vec2d(start.x, start.y);
+        Map<Vec2d, Vec2d> cameFrom = new HashMap<>();
+        cameFrom.put(start, start);
 
-    public BreadthFirstSearch(Grid grid, Vec2d current, Vec2d target) {
-        this.grid = grid;
-        this.current = current;
-        this.target = target;
-    }
-
-    public void resetState() {
-        discovered = new LinkedList<>();
-        visited = new Vector<>();
-        result = null;
-        grid = null;
-        current = new Vec2d(0, 0);
-        target = new Vec2d(0, 0);
-    }
-
-    public Optional<LinkedList<Vec2d>> getResult() {
-        return result == null ? Optional.empty() : Optional.of(result);
-    }
-
-    public void setOnStepStartRunnable(Runnable runnable) {
-        onStepStart = runnable;
-    }
-
-    public void setOnStepEndRunnable(Runnable runnable) {
-        onStepEnd = runnable;
-    }
-
-    public void setOnAlgorithmEndRunnable(Runnable runnable) {
-        onAlgorithmEnd = runnable;
-    }
-
-    public void step() {
-        onStepStart.run();
-        if (grid == null || current == target) {
-            onAlgorithmEnd.run();
-            return;
+        while (true) {
+            if (current == target) {
+                LinkedList<Vec2d> path = new LinkedListDecorator<>();
+                while (current != start) {
+                    if (current != target) {
+                        path.add(current);
+                    }
+                    current = cameFrom.get(current);
+                }
+                Collections.reverse(path);
+                return Optional.of(path);
+            }
+            for (Vec2d node : grid.getNeighbours(current)) {
+                if (!visited.contains(node)) {
+                    needVisiting.add(node);
+                    cameFrom.put(node, current);
+                }
+            }
+            if (needVisiting.isEmpty()) {
+                return Optional.empty();
+            }
+            visited.add(current);
         }
-
-        onStepEnd.run();
     }
 
-}
-
-class AlgorithmStopException extends Exception {
-
-    public AlgorithmStopException(String message) {
-        super(message);
-    }
 }
