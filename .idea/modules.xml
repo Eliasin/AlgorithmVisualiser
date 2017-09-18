@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$USER_HOME$/Documents/Projects/AlgorithmVisualiser/AlgorithmVisualiser/Algorithm Visualiser.iml" filepath="$USER_HOME$/Documents/Projects/AlgorithmVisualiser/AlgorithmVisualiser/Algorithm Visualiser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Algorithm Visualiser.iml" filepath="$PROJECT_DIR$/Algorithm Visualiser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/AlgorithmVisualiser/Algorithm Visualiser.iml" filepath="$PROJECT_DIR$/AlgorithmVisualiser/Algorithm Visualiser.iml" />
     </modules>
   </component>
 </project>
