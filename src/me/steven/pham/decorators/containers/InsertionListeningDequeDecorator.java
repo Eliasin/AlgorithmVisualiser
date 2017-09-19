@@ -1,4 +1,4 @@
-package me.steven.pham.me.steven.pham.decorators.containers;
+package me.steven.pham.decorators.containers;
 
 import java.util.Collection;
 import java.util.Deque;

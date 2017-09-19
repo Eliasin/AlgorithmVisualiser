@@ -1,9 +1,9 @@
 package me.steven.pham.algorithms;
 
 import com.sun.javafx.geom.Vec2d;
-import me.steven.pham.me.steven.pham.decorators.containers.InsertionListeningDequeDecorator;
-import me.steven.pham.me.steven.pham.decorators.containers.InsertionListeningQueueDecorator;
-import me.steven.pham.me.steven.pham.decorators.containers.InsertionListeningSetDecorator;
+import me.steven.pham.decorators.containers.InsertionListeningDequeDecorator;
+import me.steven.pham.decorators.containers.InsertionListeningQueueDecorator;
+import me.steven.pham.decorators.containers.InsertionListeningSetDecorator;
 
 import java.util.*;
 
