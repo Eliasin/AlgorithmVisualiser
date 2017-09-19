@@ -11,13 +11,10 @@ public class Grid {
    private Vector<Vec2d> obstructions = new Vector<>();
 
    public Grid() {
-       for (int x = -1; x < 2; x++) {
-           for (int y = -1; y < 2; y++) {
-               if (!(x == 0 && y == 0)) {
-                   neighbourTransformations.add(new Vec2d(x, y));
-               }
-           }
-       }
+       neighbourTransformations.add(new Vec2d(1, 0));
+       neighbourTransformations.add(new Vec2d(-1, 0));
+       neighbourTransformations.add(new Vec2d(0, 1));
+       neighbourTransformations.add(new Vec2d(0, -1));
    }
 
    public Grid(Vec2d dimensions) {

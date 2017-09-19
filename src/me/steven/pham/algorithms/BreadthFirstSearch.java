@@ -20,7 +20,7 @@ public class BreadthFirstSearch {
         cameFrom.put(start, start);
 
         while (true) {
-            if (current == target) {
+            if (current.equals(target)) {
                 LinkedList<Vec2d> path = new LinkedListDecorator<>();
                 while (current != start) {
                     if (current != target) {
@@ -41,6 +41,7 @@ public class BreadthFirstSearch {
                 return Optional.empty();
             }
             visited.add(current);
+            current = needVisiting.remove();
         }
     }
 
