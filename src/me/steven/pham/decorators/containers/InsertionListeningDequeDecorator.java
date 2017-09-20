@@ -53,11 +53,13 @@ public final class InsertionListeningDequeDecorator<E> implements Deque<E> {
 
     @Override
     public void addFirst(E e) {
+        insertionListener.accept(e);
         backingDeque.addFirst(e);
     }
 
     @Override
     public void addLast(E e) {
+        insertionListener.accept(e);
         backingDeque.addLast(e);
     }
 
