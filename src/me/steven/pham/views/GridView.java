@@ -4,7 +4,6 @@ import com.sun.istack.internal.NotNull;
 import com.sun.javafx.geom.Dimension2D;
 import com.sun.javafx.geom.Vec2d;
 import me.steven.pham.algorithms.BreadthFirstSearch;
-import me.steven.pham.algorithms.Grid;
 
 import javax.swing.*;
 import java.awt.*;
