@@ -14,6 +14,7 @@ public class BreadthFirstSearch {
     private Consumer<Vec2d> visitedInsertionConsumer = e -> {};
     private Consumer<Vec2d> pathInsertionConsumer = e -> {};
     private Consumer<Vec2d> currentChangeConsumer = e -> {};
+    private Consumer<Vec2d> targetChangeConsumer = e -> {};
 
     public void setNeedVisitingInsertionConsumer(Consumer<Vec2d> needVisitingInsertionConsumer) {
         this.needVisitingInsertionConsumer = needVisitingInsertionConsumer;
@@ -33,6 +34,7 @@ public class BreadthFirstSearch {
 
     public Optional<Deque<Vec2d>> run(Grid grid, Vec2d start, Vec2d target) {
 
+        targetChangeConsumer.accept(target);
         Queue<Vec2d> needVisiting = new InsertionListeningQueueDecorator<>(new ArrayDeque<>(), needVisitingInsertionConsumer);
         Set<Vec2d> visited = new InsertionListeningSetDecorator<>(new HashSet<>(), visitedInsertionConsumer);
         Vec2d current = new Vec2d(start.x, start.y);
