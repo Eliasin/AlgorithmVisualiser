@@ -3,50 +3,56 @@ package me.steven.pham;
 import com.sun.javafx.geom.Vec2d;
 import me.steven.pham.algorithms.BreadthFirstSearch;
 import me.steven.pham.algorithms.Grid;
+import me.steven.pham.views.GridView;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Deque;
-import java.util.Optional;
 
-public class Main extends Frame {
+public class Main {
+
+    Grid grid = new Grid(new Vec2d(10, 10));
+    GridView gridView = null;
+    JFrame frame = new JFrame();
 
     public static void main(String[] args) {
-        BreadthFirstSearch bfs = new BreadthFirstSearch();
-        Grid grid = new Grid(new Vec2d(12, 12));
-
-        Optional<Deque<Vec2d>> path = bfs.run(grid, new Vec2d(1,1 ), new Vec2d(3, 3));
-
-        if (path.isPresent()) {
-            for (Vec2d node : path.get()) {
-                System.out.println(node.x + " " + node.y);
-            }
-        }
-        else {
-            System.out.println("No path present");
-        }
-
         new Main();
     }
 
-    public Main() {
-        super("AlgorithmVisualiser");
+    private void initWindow() {
+        frame.setTitle("AlgorithmVisualiser");
+        frame.add(gridView);
 
-        setSize(1920, 1080);
-        setVisible(true);
+        int windowWidth = 1800;
+        int windowHeight = 1000;
+        frame.setBounds(0, 0, windowWidth, windowHeight);
+        frame.setPreferredSize(new Dimension(windowWidth, windowHeight));
+        frame.setLayout(null);
 
-        addWindowListener(new WindowAdapter() {
+        frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                dispose();
+                frame.dispose();
                 System.exit(0);
             }
         });
+        frame.setResizable(false);
+        frame.setVisible(true);
+        frame.pack();
     }
 
-    public void paint(Graphics g) {
-        g.setColor(new Color(0xFF000000, true));
-        g.fillRect(100, 100, 200, 200);
+    private void mainLoop() {
+        BreadthFirstSearch bfs = new BreadthFirstSearch();
+        gridView.setBFSConsumers(bfs);
+        bfs.run(grid, new Vec2d(1, 1), new Vec2d(5, 5));
     }
+
+
+    public Main() {
+        gridView = new GridView(grid.getDimensions());
+        initWindow();
+        mainLoop();
+    }
+
 }
