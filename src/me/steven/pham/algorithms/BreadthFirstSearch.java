@@ -79,7 +79,7 @@ public class BreadthFirstSearch {
                 return Optional.of(path);
             }
             for (Vec2d node : grid.getNeighbours(current)) {
-                if (!visited.contains(node)) {
+                if (!visited.contains(node) && !needVisiting.contains(node)) {
                     needVisiting.add(node);
                     cameFrom.put(node, current);
                     sleepForDelayTime();
@@ -90,6 +90,7 @@ public class BreadthFirstSearch {
             }
             visited.add(current);
             current = needVisiting.remove();
+            currentChangeConsumer.accept(current);
             sleepForDelayTime();
         }
     }
