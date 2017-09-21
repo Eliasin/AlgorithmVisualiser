@@ -7,10 +7,17 @@ import me.steven.pham.algorithms.BreadthFirstSearch;
 
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GridView extends JPanel {
+
+    private static final Field tmpComponentsField;
+    private static final Method dirtyPaintingMethod;
 
     private Vec2d gridDimensions = new Vec2d();
     private List<List<Color>> gridColors = new ArrayList<>();
@@ -38,6 +45,36 @@ public class GridView extends JPanel {
         bfs.setNeedVisitingInsertionConsumer(this::needsVisitingInsertionConsumer);
         bfs.setVisitedInsertionConsumer(this::visitedInsertionConsumer);
         bfs.setPathInsertionConsumer(this::pathInsertionConsumer);
+        bfs.setTargetChangeConsumer(this::targetChangeConsumer);
+        bfs.setRepaintListener(this::repaint);
+    }
+
+    static {
+        Field tmpCompField;
+        Method paintMtd;
+        try {
+            tmpCompField = RepaintManager.class.getDeclaredField("tmpDirtyComponents");
+            paintMtd = RepaintManager.class.getDeclaredMethod("paintDirtyRegions", Map.class);
+            tmpCompField.setAccessible(true);
+            paintMtd.setAccessible(true);
+        }
+        catch (ReflectiveOperationException e) {
+            tmpCompField = null;
+            paintMtd = null;
+        }
+        tmpComponentsField = tmpCompField;
+        dirtyPaintingMethod = paintMtd;
+    }
+
+    public void repaint() {
+        RepaintManager thisManager = RepaintManager.currentManager(this);
+        thisManager.markCompletelyDirty(this);
+        try {
+            Map<Component,Rectangle> tmpComponents = new ConcurrentHashMap<>((Map<Component, Rectangle>) tmpComponentsField.get(thisManager));
+            dirtyPaintingMethod.invoke(thisManager, tmpComponents);
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
