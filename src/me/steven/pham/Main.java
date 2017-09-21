@@ -9,12 +9,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.*;
+import java.util.Timer;
 
 public class Main {
 
-    Grid grid = new Grid(new Vec2d(10, 10));
-    GridView gridView = null;
-    JFrame frame = new JFrame();
+    private Grid grid = new Grid(new Vec2d(10, 10));
+    private GridView gridView = null;
+    private JFrame frame = new JFrame();
 
     public static void main(String[] args) {
         new Main();
@@ -45,7 +47,14 @@ public class Main {
     private void mainLoop() {
         BreadthFirstSearch bfs = new BreadthFirstSearch();
         gridView.setBFSConsumers(bfs);
-        bfs.run(grid, new Vec2d(1, 1), new Vec2d(5, 5));
+        
+        Optional<Deque<Vec2d>> path = bfs.run(grid, new Vec2d(1, 1), new Vec2d(5, 5));
+        if (path.isPresent()) {
+            for (Vec2d node : path.get()) {
+                System.out.println(node);
+            }
+        }
+
     }
 
 
