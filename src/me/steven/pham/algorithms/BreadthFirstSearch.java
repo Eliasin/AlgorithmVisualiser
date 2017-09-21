@@ -15,6 +15,17 @@ public class BreadthFirstSearch {
     private Consumer<Vec2d> pathInsertionConsumer = e -> {};
     private Consumer<Vec2d> currentChangeConsumer = e -> {};
     private Consumer<Vec2d> targetChangeConsumer = e -> {};
+    private Runnable repaintListener = () -> {};
+
+    private int stepDelay = 0;
+
+    public BreadthFirstSearch() {
+        this(30);
+    }
+
+    public BreadthFirstSearch(int stepDelay) {
+        this.stepDelay = stepDelay;
+    }
 
     public void setNeedVisitingInsertionConsumer(Consumer<Vec2d> needVisitingInsertionConsumer) {
         this.needVisitingInsertionConsumer = needVisitingInsertionConsumer;
@@ -32,13 +43,25 @@ public class BreadthFirstSearch {
         this.currentChangeConsumer = currentChangeConsumer;
     }
 
+    public void setTargetChangeConsumer(Consumer<Vec2d> targetChangeConsumer) {
+        this.targetChangeConsumer = targetChangeConsumer;
+    }
+
+    public void setRepaintListener(Runnable repaintListener) {
+        this.repaintListener = repaintListener;
+    }
+
+    private void sleepForDelayTime() {
+        try { Thread.sleep(stepDelay); } catch (Exception e) {}
+        repaintListener.run();
+    }
+
     public Optional<Deque<Vec2d>> run(Grid grid, Vec2d start, Vec2d target) {
 
         targetChangeConsumer.accept(target);
         Queue<Vec2d> needVisiting = new InsertionListeningQueueDecorator<>(new ArrayDeque<>(), needVisitingInsertionConsumer);
         Set<Vec2d> visited = new InsertionListeningSetDecorator<>(new HashSet<>(), visitedInsertionConsumer);
         Vec2d current = new Vec2d(start.x, start.y);
-        currentChangeConsumer.accept(current);
         Map<Vec2d, Vec2d> cameFrom = new HashMap<>();
         cameFrom.put(start, start);
 
@@ -50,6 +73,7 @@ public class BreadthFirstSearch {
                         path.addLast(current);
                     }
                     current = cameFrom.get(current);
+                    sleepForDelayTime();
                 }
 
                 return Optional.of(path);
@@ -58,6 +82,7 @@ public class BreadthFirstSearch {
                 if (!visited.contains(node)) {
                     needVisiting.add(node);
                     cameFrom.put(node, current);
+                    sleepForDelayTime();
                 }
             }
             if (needVisiting.isEmpty()) {
@@ -65,7 +90,7 @@ public class BreadthFirstSearch {
             }
             visited.add(current);
             current = needVisiting.remove();
-            currentChangeConsumer.accept(current);
+            sleepForDelayTime();
         }
     }
 
