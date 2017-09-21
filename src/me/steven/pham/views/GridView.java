@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GridView extends JPanel {
@@ -26,16 +27,21 @@ public class GridView extends JPanel {
     private static final int needsVisitingColor = 0xadd8e6;
     private static final int pathColor = 0x0fb40f;
     private static final int currentColor = 0xffff00;
-    private static final int targetColor = 0xff00000;
-
-    public GridView(Vec2d gridDimensions) {
+    private static final int targetColor = 0xff0000;
+    private static final int obstructionColor = 0xa0956f;
+    public GridView(Vec2d gridDimensions, Set<Vec2d> obstructions) {
         setBounds(0, 0, 1920, 1080);
 
         this.gridDimensions = gridDimensions;
         for (int i = 0; i < gridDimensions.x; i++) {
             gridColors.add(new ArrayList<>());
             for (int j = 0; j < gridDimensions.y; j++) {
-                gridColors.get(i).add(new Color(255,255,255));
+                if (obstructions.contains(new Vec2d(i + 1, j + 1))) {
+                    gridColors.get(i).add(new Color(obstructionColor, false));
+                }
+                else {
+                    gridColors.get(i).add(new Color(Color.white.getRGB(), false));
+                }
             }
         }
     }

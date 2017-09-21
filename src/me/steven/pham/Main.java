@@ -14,7 +14,7 @@ import java.util.Timer;
 
 public class Main {
 
-    private Grid grid = new Grid(new Vec2d(10, 10));
+    private Grid grid = new Grid(new Vec2d(15, 15));
     private GridView gridView = null;
     private JFrame frame = new JFrame();
 
@@ -47,8 +47,8 @@ public class Main {
     private void mainLoop() {
         BreadthFirstSearch bfs = new BreadthFirstSearch();
         gridView.setBFSConsumers(bfs);
-        
-        Optional<Deque<Vec2d>> path = bfs.run(grid, new Vec2d(1, 1), new Vec2d(5, 5));
+
+        Optional<Deque<Vec2d>> path = bfs.run(grid, new Vec2d(1, 1), new Vec2d(15, 13));
         if (path.isPresent()) {
             for (Vec2d node : path.get()) {
                 System.out.println(node);
@@ -57,9 +57,13 @@ public class Main {
 
     }
 
+    private void setupGrid() {
+        grid.addObstruction(new Vec2d(2, 1));
+    }
 
     public Main() {
-        gridView = new GridView(grid.getDimensions());
+        setupGrid();
+        gridView = new GridView(grid.getDimensions(), grid.getObstructedNodes());
         initWindow();
         mainLoop();
     }
