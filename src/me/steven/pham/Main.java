@@ -9,12 +9,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.*;
-import java.util.Timer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
 
     private Grid grid = new Grid(new Vec2d(15, 15));
+    private List<GridBundle> grids = new ArrayList<>();
     private GridView gridView = null;
     private JFrame frame = new JFrame();
 
@@ -48,24 +49,36 @@ public class Main {
         BreadthFirstSearch bfs = new BreadthFirstSearch();
         gridView.setBFSConsumers(bfs);
 
-        Optional<Deque<Vec2d>> path = bfs.run(grid, new Vec2d(1, 1), new Vec2d(15, 13));
-        if (path.isPresent()) {
-            for (Vec2d node : path.get()) {
-                System.out.println(node);
+        while (true) {
+            for (GridBundle gridBundle : grids) {
+                gridView.setup(gridBundle.grid.getDimensions(), gridBundle.grid.getObstructedNodes());
+                bfs.run(gridBundle.grid, gridBundle.start, gridBundle.target);
             }
         }
-
     }
 
     private void setupGrid() {
-        grid.addObstruction(new Vec2d(2, 1));
+        grids.add(new GridBundle(new Grid(new Vec2d(10, 10)), new Vec2d(1, 1), new Vec2d(4, 9)));
+        grids.add(new GridBundle(new Grid(new Vec2d(15, 15)), new Vec2d(1, 5), new Vec2d(11, 11)));
     }
 
     public Main() {
         setupGrid();
-        gridView = new GridView(grid.getDimensions(), grid.getObstructedNodes());
+        gridView = new GridView();
         initWindow();
         mainLoop();
     }
 
+}
+
+class GridBundle {
+    public Grid grid;
+    Vec2d start;
+    Vec2d target;
+
+    public GridBundle(Grid grid, Vec2d start, Vec2d target) {
+        this.grid = grid;
+        this.start = start;
+        this.target = target;
+    }
 }

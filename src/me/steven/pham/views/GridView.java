@@ -29,10 +29,22 @@ public class GridView extends JPanel {
     private static final int currentColor = 0xffff00;
     private static final int targetColor = 0xff0000;
     private static final int obstructionColor = 0xa0956f;
-    public GridView(Vec2d gridDimensions, Set<Vec2d> obstructions) {
-        setBounds(0, 0, 1920, 1080);
 
-        this.gridDimensions = gridDimensions;
+    private boolean done = true;
+
+    public GridView() {
+        setBounds(0, 0, 1920, 1080);
+    }
+
+    public GridView(Vec2d gridDimensions, Set<Vec2d> obstructions) {
+        this();
+        setup(gridDimensions, obstructions);
+    }
+
+    public void setup(Vec2d gridDimensions, Set<Vec2d> obstructions) {
+        done = false;
+        gridColors.clear();
+        this.gridDimensions = new Vec2d(gridDimensions.x, gridDimensions.y);
         for (int i = 0; i < gridDimensions.x; i++) {
             gridColors.add(new ArrayList<>());
             for (int j = 0; j < gridDimensions.y; j++) {
@@ -53,6 +65,7 @@ public class GridView extends JPanel {
         bfs.setPathInsertionConsumer(this::pathInsertionConsumer);
         bfs.setTargetChangeConsumer(this::targetChangeConsumer);
         bfs.setRepaintListener(this::repaint);
+        bfs.setDoneListener(() -> done = true);
     }
 
     static {
@@ -85,10 +98,18 @@ public class GridView extends JPanel {
 
     @Override
     public void paint(Graphics g) {
+        if (done) {
+            return;
+        }
+
         Dimension2D windowDimensions = new Dimension2D(this.getParent().getWidth(), this.getParent().getHeight());
+
+        g.setColor(Color.white);
+        g.fillRect(0, 0, (int) windowDimensions.width, (int) windowDimensions.height);
+
         int gridLength = (int) Math.min(windowDimensions.width, windowDimensions.height) / (int)gridDimensions.x;
-        for (int i = 0; i < (int) gridDimensions.x; i++) {
-            for (int j = 0; j < (int) gridDimensions.y; j++) {
+        for (int i = 0; i < (int) Math.min(gridDimensions.x, gridColors.size()); i++) {
+            for (int j = 0; j < (int) Math.min(gridDimensions.y, gridColors.get(i).size()); j++) {
                 g.setColor(gridColors.get(i).get(j));
                 g.fillRect(i * gridLength, j * gridLength, gridLength, gridLength);
                 g.setColor(Color.black);

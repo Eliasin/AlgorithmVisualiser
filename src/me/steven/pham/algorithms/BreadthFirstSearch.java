@@ -16,6 +16,7 @@ public class BreadthFirstSearch {
     private Consumer<Vec2d> currentChangeConsumer = e -> {};
     private Consumer<Vec2d> targetChangeConsumer = e -> {};
     private Runnable repaintListener = () -> {};
+    private Runnable doneListener = () -> {};
 
     private int stepDelay = 0;
 
@@ -51,6 +52,10 @@ public class BreadthFirstSearch {
         this.repaintListener = repaintListener;
     }
 
+    public void setDoneListener(Runnable doneListener) {
+        this.doneListener = doneListener;
+    }
+
     private void sleepForDelayTime() {
         try { Thread.sleep(stepDelay); } catch (Exception e) {}
         repaintListener.run();
@@ -76,6 +81,7 @@ public class BreadthFirstSearch {
                     sleepForDelayTime();
                 }
 
+                doneListener.run();
                 return Optional.of(path);
             }
             for (Vec2d node : grid.getNeighbours(current)) {
@@ -86,6 +92,7 @@ public class BreadthFirstSearch {
                 }
             }
             if (needVisiting.isEmpty()) {
+                doneListener.run();
                 return Optional.empty();
             }
             visited.add(current);
